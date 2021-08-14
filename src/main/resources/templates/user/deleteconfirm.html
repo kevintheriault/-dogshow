@@ -1,10 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
-    <title>Confirm Deletion of Dog Record</title>
+    <title>HOME - Burlington Dog Show</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+<header class="header">
+    <h1>Burlington Dog Show</h1>
+    <nav>
+        <a th:href="@{/}">Home</a> |
+        <a th:href="@{/user}">User Page</a> | <span th:switch="${#authentication} ? ${#authorization.expression('isAuthenticated()')} : ${false}">
+    <a th:case="${false}" th:href="@{/login}">Login</a>
+    <a th:case="${true}" th:href="@{/logout}">Logout</a>
+    </span> |
+        <a th:href="@{/register}">Register</a> |
+        <a th:href="@{/showlist}">Show List</a>
+    </nav>
+</header>
 <h1>Delete a Record</h1>
 You are about to permanently <span th:text="${dog.dogName}"></span> delete from the system. <br>
 Are you sure?<br>

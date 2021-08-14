@@ -14,8 +14,8 @@ public class Dog {
     private String dogName;
     private String ownerName;
     private String breed;
-    private String gender;
-    private String pathway;
+    private String gender = "male";
+    private String pathway = "class";
 
     public Dog(String ownername){
         this.ownerName = ownername;

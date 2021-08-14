@@ -1,6 +1,8 @@
 package ca.sheridan.theriake.dogshows;
 
 import ca.sheridan.theriake.dogshows.beans.Dog;
+import ca.sheridan.theriake.dogshows.beans.Response;
+import ca.sheridan.theriake.dogshows.beans.ShowData;
 import ca.sheridan.theriake.dogshows.beans.User;
 import ca.sheridan.theriake.dogshows.repositories.DogRepository;
 import ca.sheridan.theriake.dogshows.repositories.SecurityRepository;
@@ -10,10 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,8 +99,25 @@ public class DogShowController {
 
     @GetMapping("/user/userdoglist")
     public String getUserDogList(Model model, Authentication auth) {
+        boolean isAdmin = false;
+        List<String> roles = new ArrayList<String>();
+        for (GrantedAuthority ga : auth.getAuthorities()) {
+            roles.add(ga.getAuthority());
+        }
+        for (String admin : roles) {
+            if (admin.contains("ROLE_ADMIN")) {
+                isAdmin = true;
+            }
+        }
+
         Long userId = securityRepo.findUser(auth.getName()).getUserId();
-        model.addAttribute("dogs", dogRepo.getUserDogs(userId));
+
+        if(isAdmin){
+            model.addAttribute("dogs", dogRepo.getAllDogs());
+        }else {
+            model.addAttribute("dogs", dogRepo.getUserDogs(userId));
+        }
+
 
         return "/user/userdoglist.html";
     }
@@ -177,10 +193,18 @@ public class DogShowController {
         return "/showlist.html";
     }
 
-    @GetMapping("/getTypes")
-    public List<Dog> getData(@RequestParam String category){
-        ArrayList<Dog> showListByType = dogRepo.getDogByType(category);
+    @PostMapping("/getData")
+    @ResponseBody
+    public Response getData(@RequestParam String category){
+        ArrayList<ShowData> showListByType = dogRepo.getDogByType(category);
+        Response response = new Response();
 
-        return showListByType;
+        response.setStatus(true);
+        response.setMessage("Retrieval succeeded");
+        response.setData(showListByType);
+
+        System.out.println(showListByType);
+
+        return response;
     }
 }

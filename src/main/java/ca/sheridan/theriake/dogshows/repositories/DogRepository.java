@@ -1,6 +1,7 @@
 package ca.sheridan.theriake.dogshows.repositories;
 
 import ca.sheridan.theriake.dogshows.beans.Dog;
+import ca.sheridan.theriake.dogshows.beans.ShowData;
 import ca.sheridan.theriake.dogshows.beans.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -45,27 +46,35 @@ public class DogRepository {
         return types;
     }
 
-    public ArrayList<Dog> getDogByType(String category){
+//    GET DOGS BY CATEGORY FOR SHOW LIST
+    public ArrayList<ShowData> getDogByType(String category){
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-        String query = "SELECT * FROM dog INNER JOIN breed ON dog.breedid = breed.breedid WHERE " +
-                "breed.breedtype = :category";
+        String query = "SELECT COUNT(dog.breedid) AS NumOfDogs, breedname, breedtype, " +
+                "SUM(CASE WHEN dog.gender = 'male' THEN 1 ELSE 0 END) AS NumOfMales, " +
+                "SUM(CASE WHEN dog.gender = 'female' THEN 1 ELSE 0 END) AS NumOfFem, " +
+                "SUM(CASE WHEN dog.pathway = 'class' THEN 1 ELSE 0 END) AS NumOfClass, " +
+                "SUM(CASE WHEN dog.pathway = 'speciality' THEN 1 ELSE 0 END) as NumOfSpec " +
+                "FROM dog INNER JOIN breed ON dog.breedid =  breed.breedid GROUP BY " +
+                "breedname HAVING breedtype = :category";
+
         parameters.addValue("category", category);
 
         List<Map<String, Object>> rows = jdbc.queryForList(query, parameters);
-        ArrayList<Dog> dogsByType = new ArrayList<Dog>();
+        ArrayList<ShowData> showListData = new ArrayList<ShowData>();
 
 //        TODO: Refactor to separate method.
         for(Map<String, Object> row : rows){
-            Dog dog = new Dog();
-            dog.setDogId((Long)row.get("dogid"));
-            dog.setDogName((String)row.get("dogname"));
-            dog.setOwnerName((String)row.get("username"));
-            dog.setBreed((String)row.get("breedname"));
-            dog.setGender((String)row.get("gender"));
-            dog.setPathway((String)row.get("pathway"));
-            dogsByType.add(dog);
+            ShowData data = new ShowData();
+            data.setBreedType((String)row.get("breedtype"));
+            data.setNumDogs((Long)row.get("NumOfDogs"));
+            data.setBreed((String)row.get("breedname"));
+            data.setNumMales((Long)row.get("NumOfMales"));
+            data.setNumFem((Long)row.get("NumOfFem"));
+            data.setNumClass((Long)row.get("NumOfClass"));
+            data.setNumSpec((Long)row.get("NumOfSpec"));
+            showListData.add(data);
         }
-        return dogsByType;
+        return showListData;
     }
 
     public void addDog(Dog dog, User user){
@@ -85,9 +94,31 @@ public class DogRepository {
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         String query = "SELECT * FROM dog INNER JOIN sec_user ON dog.OWNERID=sec_user.userid INNER JOIN breed ON " +
-                "dog.breedId = breed.breedid";
+                "dog.breedId = breed.breedid WHERE dog.ownerid = :userid";
         ArrayList<Dog> dogList = new ArrayList<Dog>();
         parameters.addValue("userid", userId);
+
+        List<Map<String, Object>> rows = jdbc.queryForList(query, parameters);
+
+        for(Map<String, Object> row : rows){
+            Dog dog = new Dog();
+            dog.setDogId((Long)row.get("dogid"));
+            dog.setDogName((String)row.get("dogname"));
+            dog.setOwnerName((String)row.get("username"));
+            dog.setBreed((String)row.get("breedname"));
+            dog.setGender((String)row.get("gender"));
+            dog.setPathway((String)row.get("pathway"));
+            dogList.add(dog);
+        }
+        return dogList;
+    }
+
+    public ArrayList<Dog> getAllDogs(){
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        String query = "SELECT * FROM dog INNER JOIN sec_user ON dog.OWNERID=sec_user.userid INNER JOIN breed ON " +
+                "dog.breedId = breed.breedid";
+        ArrayList<Dog> dogList = new ArrayList<Dog>();
 
         List<Map<String, Object>> rows = jdbc.queryForList(query, parameters);
 

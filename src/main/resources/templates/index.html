@@ -1,19 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-                xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <title>HOME - Burlington Dog Show</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-HELLO TESTING
-<div sec:authorize="isAuthenticated()">
-    TESTING SECURITY
-</div>
-
-<div>
-    <a th:href="@{/user}">User Page</a> | <a th:href="@{/login}">Login</a> |
-</div>
-
+<header class="header">
+    <h1>Burlington Dog Show</h1>
+    <nav>
+        <a th:href="@{/}">Home</a> |
+        <a th:href="@{/user}">User Page</a> | <span th:switch="${#authentication} ? ${#authorization.expression('isAuthenticated()')} : ${false}">
+    <a th:case="${false}" th:href="@{/login}">Login</a>
+    <a th:case="${true}" th:href="@{/logout}">Logout</a>
+    </span> |
+        <a th:href="@{/register}">Register</a> |
+        <a th:href="@{/showlist}">Show List</a>
+    </nav>
+</header>
+<br>
+<main>
+    <p>
+        Welcome to the Burlington Dog Show website.  You can login, register, or go to your user page to add dogs using the navigation above.
+    </p>
+</main>
 </body>
 </html>

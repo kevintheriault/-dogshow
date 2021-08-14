@@ -3,10 +3,23 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>HOME - Burlington Dog Show</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-
+<header class="header">
+    <h1>Burlington Dog Show</h1>
+    <nav>
+        <a th:href="@{/}">Home</a> |
+        <a th:href="@{/user}">User Page</a> | <span th:switch="${#authentication} ? ${#authorization.expression('isAuthenticated()')} : ${false}">
+    <a th:case="${false}" th:href="@{/login}">Login</a>
+    <a th:case="${true}" th:href="@{/logout}">Logout</a>
+    </span> |
+        <a th:href="@{/register}">Register</a> |
+        <a th:href="@{/showlist}">Show List</a>
+    </nav>
+</header>
+<main>
 <form th:action="@{/login}" method="post">
     <div th:if="${param.error}">
         <div class="alert">
@@ -38,6 +51,6 @@
            id="login-submit"
            value="login">
 </form>
-<a th:href="@{/}">HOME</a>
+    </main>
 </body>
 </html>

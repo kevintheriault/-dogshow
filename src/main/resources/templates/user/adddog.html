@@ -3,32 +3,47 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
-    <title>Add a Dog</title>
+    <title>HOME - Burlington Dog Show</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+<header class="header">
+    <h1>Burlington Dog Show</h1>
+    <nav>
+        <a th:href="@{/}">Home</a> |
+        <a th:href="@{/user}">User Page</a> | <span th:switch="${#authentication} ? ${#authorization.expression('isAuthenticated()')} : ${false}">
+    <a th:case="${false}" th:href="@{/login}">Login</a>
+    <a th:case="${true}" th:href="@{/logout}">Logout</a>
+    </span> |
+        <a th:href="@{/register}">Register</a> |
+        <a th:href="@{/showlist}">Show List</a>
+    </nav>
+</header>
 <h1>Add a Dog to the Show</h1>
-    <form th:action="@{/user/adddog}" method="post" th:object="${dog}">
-        Name: <input type="text" th:field="*{dogName}" />
+<div class="form">
+    <form class="addform" th:action="@{/user/adddog}" method="post" th:object="${dog}">
+        Name: <input type="text" th:field="*{dogName}" /> <br><br>
         Owner's Name: <input th:readonly="${isAdmin ? 'false' : 'true'}"
-                             type="text" th:field="*{ownerName}" value="test"/>
+                             type="text" th:field="*{ownerName}" value="test"/> <br><br>
         Breed:
             <select th:field="*{breed}" th:value="*{breed}">
                     <option th:each="breed, stat : ${breeds}"
                             th:text="${breed}"
                             th:value="${stat.count}"></option>
-            </select>
+            </select> <br>
 Gender:
         <label for="male" name="gender">Male</label>
         <input type="radio" id="male" name="gender" th:field="*{gender}" value="male">
         <label for="female" name="gender" >Female</label>
-        <input type="radio" id="female" name="gender" th:field="*{gender}" value="female">
+        <input type="radio" id="female" name="gender" th:field="*{gender}" value="female"> <br><br>
 Competition Pathway:
         <label for="class" name="class-spec">Class</label>
         <input type="radio" id="class" name="class-spec" th:field="*{pathway}" value="class">
         <label for="female" name="gender">Speciality</label>
-        <input type="radio" id="spec" name="class-spec" th:field="*{pathway}" value="spec">
+        <input type="radio" id="spec" name="class-spec" th:field="*{pathway}" value="spec"> <br> <br><br>
 
-        <input type="submit" value="Add Dog">
+        <input type="submit" value="Add Dog"> <br>
     </form>
+</div>
 </body>
 </html>

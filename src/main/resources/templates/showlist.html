@@ -1,15 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
-    <title>Show List</title>
+    <title>HOME - Burlington Dog Show</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-<select th:field="*{types}">
-    <option th:each="type, stat : ${types}"
-            th:text="${type}"
-            th:value="${type}"></option>
+<header class="header">
+    <h1>Burlington Dog Show</h1>
+    <nav>
+        <a th:href="@{/}">Home</a> |
+        <a th:href="@{/user}">User Page</a> | <span th:switch="${#authentication} ? ${#authorization.expression('isAuthenticated()')} : ${false}">
+    <a th:case="${false}" th:href="@{/login}">Login</a>
+    <a th:case="${true}" th:href="@{/logout}">Logout</a>
+    </span> |
+        <a th:href="@{/register}">Register</a> |
+        <a th:href="@{/showlist}">Show List</a>
+    </nav>
+</header>
+<br>
 
-</select>
+<main>
+    <div class="showlist_select">
+        <label for="types">Please Select a Category: </label>
+        <select name="types" id="types">
+            <option th:each="type, stat : ${types}"
+                    th:text="${type}"
+                    th:value="${type}"></option>
+        </select>
+    </div>
+
+    <br>
+<!--AJAX post call to /getData which calls method to retrieve dogs by breed category. -->
+<!--Using this to dynamically update the table for each category-->
+<script>
+    $(function () {
+        $("#types").change(function () {
+            let category = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: "/getData",
+                data: {category: category},
+                success: function (data) {
+
+                    //RESPONSE AFTER DATA RETRIEVAL
+                    let tableBody = document.getElementById('table_body');
+                    let trHTML = tableBody.getElementsByTagName('tr');
+                    let rows = trHTML.length;
+
+                    //REMOVE ALL ROWS in TBDY
+                    for(let i=rows-1; i>-1; i--){
+                        tableBody.removeChild(trHTML[i]);
+                    }
+
+                    //INSERT NEW DATA
+                    for(let i = 0; i < data.data.length; i++){
+                        let newRow = tableBody.insertRow(0)
+
+                        let numDogs = newRow.insertCell(0)
+                        let breed = newRow.insertCell(1)
+                        let numMale = newRow.insertCell(2)
+                        let numFem = newRow.insertCell(3)
+                        let numClass = newRow.insertCell(4)
+                        let numSpec = newRow.insertCell(5)
+
+                        if(data.data[i].numDogs == null) {
+                            numDogs.innerHTML = 0
+                        }else{
+                            numDogs.innerHTML = data.data[i].numDogs
+                        }
+
+                        if(data.data[i].breed == null){
+                            breed.innerHTML = 0
+                        }else{
+                            breed.innerHTML = data.data[i].breed
+                        }
+
+                        if(data.data[i].numMales == null){
+                            numMale.innerHTML = 0
+                        }else{
+                            numMale.innerHTML = data.data[i].numMales
+                        }
+
+                        if(data.data[i].numFem == null){
+                            numFem.innerHTML = 0
+                        }else{
+                            numFem.innerHTML = data.data[i].numFem
+                        }
+
+                        if(data.data[i].numClass == null){
+                            numClass.innerHTML = 0
+                        }else{
+                            numClass.innerHTML = data.data[i].numClass
+                        }
+
+                        if(data.data[i].numSpec == null){
+                            numSpec.innerHTML = 0
+                        }else{
+                            numSpec.innerHTML = data.data[i].numSpec
+                        }
+                    }
+                }
+            });
+        });
+        $(document).ready($("#types").trigger("change"))
+    });
+</script>
+
+<!--TABLE FOR SHOW LIST-->
+<table id="showlist_table">
+    <thead>
+        <tr>
+            <th># of Dogs</th>
+            <th>Breed</th>
+            <th># of Males</th>
+            <th># of Females</th>
+            <th># of Speciality</th>
+            <th># of Class</th>
+        </tr>
+    </thead>
+
+<!--    THIS TBODY GETS DYNAMICALLY UPDATED WITH DROPDOWN SELECTION-->
+    <tbody id="table_body">
+
+    </tbody>
+</table></main>
 </body>
 </html>
