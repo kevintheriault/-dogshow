@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm Deletion of Dog Record</title>
+</head>
+<body>
+<h1>Delete a Record</h1>
+You are about to permanently <span th:text="${dog.dogName}"></span> delete from the system. <br>
+Are you sure?<br>
+
+<form th:action="@{/user/deleteconfirm}" method="post">
+    <input type="hidden" name="dogid" th:value="${dog.dogId}" />
+    <input type="submit" text="CONFIRM">
+</form>
+</body>
+</html>

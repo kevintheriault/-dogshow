@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Register as a Dog Owner</title>
+</head>
+<body>
+<h1>Register as a Dog Owner</h1>
+
+    <form th:action="@{/register}" method="post">
+        Username: <input type="text" name="username" /><br>
+        Password: <input type="password" name="password" /><br>
+        <input type="submit" value="Register" />
+    </form>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Dogs</title>
+</head>
+<body>
+<table>
+<td>
+    <tr>
+        <th>Dog Name</th>
+        <th>Owner</th>
+        <th>Dog Breed</th>
+        <th>Dog Gender</th>
+        <th>Dog Pathway</th>
+        <th>Options</th>
+    </tr>
+    <tr th:each="dog: ${dogs}">
+        <td th:text="${dog.dogName}"></td>
+        <td th:text="${dog.ownerName}"></td>
+        <td th:text="${dog.breed}"></td>
+        <td th:text="${dog.gender}"></td>
+        <td th:text="${dog.pathway}"></td>
+        <td><a th:href="@{/user/editdog(dogid=${dog.dogId})}">EDIT</a> | <a th:href="@{/user/deleteconfirm(id=${dog.dogId})}">DELETE</a></td>
+    </tr>
+</td>
+</table>
+</body>
+</html>

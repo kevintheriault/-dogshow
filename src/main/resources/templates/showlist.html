@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Show List</title>
+</head>
+<body>
+<select th:field="*{types}">
+    <option th:each="type, stat : ${types}"
+            th:text="${type}"
+            th:value="${type}"></option>
+
+</select>
+</body>
+</html>

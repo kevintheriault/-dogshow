@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+                xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+HELLO TESTING
+<div sec:authorize="isAuthenticated()">
+    TESTING SECURITY
+</div>
+
+<div>
+    <a th:href="@{/user}">User Page</a> | <a th:href="@{/login}">Login</a> |
+</div>
+
+</body>
+</html>
